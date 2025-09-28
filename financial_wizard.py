@@ -121,8 +121,8 @@ def convexity(cfs, ytm, bond_price):
     return convexity_sum / (bond_price * (1 + ytm) ** 2)
 
 
-print(f"Zero-Coupon Bond Duration:{duration([0,1000], 0.02, 907.63)}")
-print(f"Zero-Coupon Bond Duration:{duration([0,0,0,0,1000], 0.02, 783.53)}")
+print(f"Zero-Coupon Bond Duration:{duration([50, 50 ,1050], 0.05, 1000)}")
+print(f"Zero-Coupon Bond Duration:{duration([0, 1020.50], 0.05, 1102.50)}")
 print(f"Present Value of Liability is : {1000/1.05**3}")
 
 
@@ -146,4 +146,40 @@ def immunization_weights(D1, D2, D_L):
 
     return w1, w2
 
-print(f"Ideal Weights to Immunize your portfolio would be {immunization_weights(2.1179749043949307, 5.7798093871958685, 3)}")
+print(f"Ideal Weights to Immunize your portfolio would be {immunization_weights(2.8594104308390023, 1.6791357510502312, 2)}")
+
+print(f"Weight for Bond 1: {immunization_weights(2.8594104308390023, 1.6791357510502312, 2)[0] * 1000/1.05**3 }")
+print(f"Weight for Bond 2: {immunization_weights(2.8594104308390023, 1.6791357510502312, 2)[1] * 1000/1.05**3 }")
+
+def pvgo(r, eps, stock_price):
+    """
+    Calculate the Present Value of Growth Opportunities (PVGO).
+
+    Parameters:
+        r (float): Required rate of return (as a decimal)
+        eps (float): Earnings per share
+        stock_price (float): Current stock price
+
+    Returns:
+        float: Present Value of Growth Opportunities
+    """
+    pvgo = stock_price - (eps / r)
+    return pvgo
+
+def get_sustainable_growth_rate(roe, payout_ratio):
+    """
+    Calculate the sustainable growth rate (SGR) of a company.
+
+    Parameters:
+        bv (float): Book value of equity
+        roe (float): Return on equity (as a decimal)
+        payout_ratio (float): Dividend payout ratio (as a decimal)
+
+    Returns:
+        float: Sustainable growth rate (as a decimal)
+    """
+    sgr = roe * (1 - payout_ratio)
+    return sgr
+
+print(f"PVGO is : {pvgo(1.25, 0.20, 5)}")
+print(f"Sustainable Growth Rate is : {get_sustainable_growth_rate(0.15, 0.40)}")
