@@ -40,13 +40,13 @@ def pv_annuity_due(pmt, r, n):
     :param n: number of payment periods
     :return: present value
     """
-    return pmt * (1/r-1/(r*(1+r)**n)*(1+r))
+    return pmt * ((1/r-1/(r*(1+r)**n))*(1+r))
 
 
 def pmt_given_pv(pv, r, n):
     """
     Find the expected payments given the present value. For example, buying a home and trying to figure out what the monthly cost would be.
-    :param pv: present va
+    :param pv: present value
     :param r: rate of interest per period
     :param n: number of payment periods
     :return:
@@ -75,23 +75,50 @@ def fv_growing_ordinary_annuity(pmt, r, n, g):
     return pmt * ((1+r)**n-(1+g)**n)/(r-g)
 
 
-### Make Duration and Modified Duration Functions
-# 1) Need explanation for each of these functions
+
 def duration(cfs, ytm, bond_price):
+    """
+    Returns the weighted average time until cash flows are received, also known as Macaulay Duration
+    :param cfs: cash flows (list or array)
+    :param ytm: yield to maturity (as a decimal)
+    :param bond_price: current bond price
+    :return: Macaulay Duration
+    """
     weighted_times = []
     for i in range(len(cfs)):
-        # discount each cash flow
         pv = cfs[i] / (1 + ytm) ** (i+1)
-        # weight by price
         weight = pv / bond_price
-        # multiply by time
         weighted_times.append(weight * (i+1))
 
     return np.sum(weighted_times)
 
 
 def modified_duration(cfs, ytm, bond_price):
+    """
+    Returns the modified duration, which measures the price sensitivity of a bond to interest rate changes
+    :param cfs: cash flows (list or array)
+    :param ytm: yield to maturity (as a decimal)
+    :param bond_price: current bond price
+    :return: Modified Duration
+    """
     d = duration(cfs, ytm, bond_price)
     return d / (1 + ytm)
 
 
+def convexity(cfs, ytm, bond_price):
+    """
+    Returns the convexity of a bond, which measures the curvature in the relationship between bond prices and bond yields
+    :param cfs: cash flows (list or array)
+    :param ytm: yield to maturity (as a decimal)
+    :param bond_price: current bond price
+    :return: Convexity
+    """
+    convexity_sum = 0
+    for i in range(len(cfs)):
+        pv = cfs[i] / (1 + ytm) ** (i+1)
+        convexity_sum += pv * (i+1) * (i+2)
+
+    return convexity_sum / (bond_price * (1 + ytm) ** 2)
+
+
+print(convexity([5, 5, 105], 0.05, 95.23))
