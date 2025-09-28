@@ -121,4 +121,29 @@ def convexity(cfs, ytm, bond_price):
     return convexity_sum / (bond_price * (1 + ytm) ** 2)
 
 
-print(convexity([5, 5, 105], 0.05, 95.23))
+print(f"Zero-Coupon Bond Duration:{duration([0,1000], 0.02, 907.63)}")
+print(f"Zero-Coupon Bond Duration:{duration([0,0,0,0,1000], 0.02, 783.53)}")
+print(f"Present Value of Liability is : {1000/1.05**3}")
+
+
+def immunization_weights(D1, D2, D_L):
+    """
+    Calculate portfolio weights for immunization using two bonds.
+
+    Parameters:
+        D1 (float): Macaulay duration of bond 1
+        D2 (float): Macaulay duration of bond 2
+        D_L (float): Liability duration (target horizon)
+
+    Returns:
+        tuple: (w1, w2) portfolio weights for bond 1 and bond 2
+    """
+    if D1 == D2:
+        raise ValueError("Durations of the two bonds must be different.")
+
+    w1 = (D2 - D_L) / (D2 - D1)
+    w2 = 1 - w1
+
+    return w1, w2
+
+print(f"Ideal Weights to Immunize your portfolio would be {immunization_weights(2.1179749043949307, 5.7798093871958685, 3)}")
